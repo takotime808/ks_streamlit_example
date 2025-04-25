@@ -216,4 +216,12 @@ if uploaded_file1 and uploaded_file2:
         """)
 
 else:
-    st.info("📂 Please upload both CSV files to begin.\nIf you do not have any, navigator to the 'Generate Distribution' page in the left side bar and make some csv files to upload here.")
+    # st.info("📂 Please upload both CSV files to begin.")
+    # st.info("If you do not have any CSV files available, navigate to the 'Generate Distribution' page in the left side bar and make some csv files to upload here.")
+    st.info("""
+        📂 Please upload both CSV files to begin. 
+        If you don't have the CSV files yet, you can generate them using the **Generate Distribution** page on the left. 
+        To do so, navigate to the **Generate Distribution** page, select the desired distribution (Normal, Uniform, Exponential, or Binomial), 
+        set the parameters, and then download the generated data as a CSV file. 
+        Once you have your files, you can upload them here to compare distributions.
+    """)
