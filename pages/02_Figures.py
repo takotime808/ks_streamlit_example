@@ -98,12 +98,22 @@ if uploaded_file1 and uploaded_file2:
     st.pyplot(fig7)
     st.write("The CDF plot shows the cumulative probability of each sample and allows comparison of their distributions.")
 
+    # # === Plot 8: Pairwise Distribution Plot ===
+    # st.subheader("🔀 Pairwise Distribution Plot")
+    # pairplot_data = pd.concat([df1, df2], ignore_index=True)
+    # sns.pairplot(pairplot_data)
+    # st.pyplot()
+    # st.write("The pairwise distribution plot shows the relationships between different features, helpful for multivariate comparisons.")
+
     # === Plot 8: Pairwise Distribution Plot ===
     st.subheader("🔀 Pairwise Distribution Plot")
     pairplot_data = pd.concat([df1, df2], ignore_index=True)
-    sns.pairplot(pairplot_data)
-    st.pyplot()
+    # Generate the pairplot
+    pairplot = sns.pairplot(pairplot_data)
+    # Display the figure explicitly
+    st.pyplot(pairplot.fig)
     st.write("The pairwise distribution plot shows the relationships between different features, helpful for multivariate comparisons.")
+
 
     # === Plot 9: Lag Plot (for Time Series Data) ===
     st.subheader("⏳ Lag Plot")
@@ -114,4 +124,13 @@ if uploaded_file1 and uploaded_file2:
     st.write("A lag plot is used to examine time series data for autocorrelation. It helps check the relationship between data points at different time lags.")
 
 else:
-    st.info("📂 Please upload both CSV files to begin.")
+    st.info("""
+    📂 Please upload both CSV files to begin.
+
+    If you don't have the CSV files yet, you can generate them using the **Generate Distribution** page on the left.
+    
+    To do so, navigate to the **Generate Distribution** page, select the desired distribution (Normal, Uniform, Exponential, or Binomial), 
+    set the parameters, and then download the generated data as a CSV file. 
+    Once you have your files, you can upload them here to compare distributions.
+""")
+
