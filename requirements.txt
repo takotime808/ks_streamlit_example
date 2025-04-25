@@ -3,4 +3,5 @@ pandas==1.5.3
 numpy==1.23.5
 scipy==1.10.1
 matplotlib==3.6.3
-altair
+# altair<5
+altair==4.2.0  # specify Altair version 4.x for compatibility
