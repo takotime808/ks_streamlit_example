@@ -49,9 +49,14 @@ if uploaded_file:
             except Exception as err:
                 st.markdown(f"Oopsie: {err}")
 
-            # 3. Conditional KDE
+            # 2. Bivariate plot with multiple elements
+            def bivariate_elements():
+                fig, ax = plt.subplots()
+                sns.scatterplot(data=df, x=df[selected_cols].columns[0], y=df[selected_cols].columns[1], ax=ax)
+                sns.kdeplot(data=df, x=df[selected_cols].columns[0], y=df[selected_cols].columns[1], ax=ax, levels=5, color="r")
+                return fig
             try:
-                display_plot("🌊 Conditional KDE", lambda: sns.displot(data=df, x=df[selected_cols].columns[0], col="time", kind="kde").figure)
+                display_plot("🧮 Bivariate with Multiple Elements", bivariate_elements)
             except Exception as err:
                 st.markdown(f"Oopsie: {err}")
 
@@ -135,14 +140,9 @@ if uploaded_file:
             except Exception as err:
                 st.markdown(f"Oopsie: {err}")
 
-            # 15. Bivariate plot with multiple elements
-            def bivariate_elements():
-                fig, ax = plt.subplots()
-                sns.scatterplot(data=df, x=df[selected_cols].columns[0], y=df[selected_cols].columns[1], ax=ax)
-                sns.kdeplot(data=df, x=df[selected_cols].columns[0], y=df[selected_cols].columns[1], ax=ax, levels=5, color="r")
-                return fig
+            # -4. Conditional KDE
             try:
-                display_plot("🧮 Bivariate with Multiple Elements", bivariate_elements)
+                display_plot("🌊 Conditional KDE", lambda: sns.displot(data=df, x=df[selected_cols].columns[0], col="time", kind="kde").figure)
             except Exception as err:
                 st.markdown(f"Oopsie: {err}")
 
