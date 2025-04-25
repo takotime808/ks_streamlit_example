@@ -29,6 +29,8 @@ if uploaded_file1 and uploaded_file2:
         ["None", "ECDF", "Histogram", "Cross-Correlation", "RMSE Plot"]
     )
     
+    fig = None  # Initialize the fig variable to avoid errors if no plot is selected.
+
     if plot_type == "ECDF":
         st.subheader("📈 ECDF")
         st.markdown("""
@@ -102,14 +104,16 @@ if uploaded_file1 and uploaded_file2:
     def save_plot(fig):
         buf = BytesIO()
         fig.savefig(buf, format="png")
+        buf.seek(0)
         return buf.getvalue()
 
-    st.download_button(
-        "🖼️ Download Plot", 
-        save_plot(fig), 
-        file_name="plot.png", 
-        mime="image/png"
-    )
+    if fig is not None:  # Ensure the plot is created before attempting to download
+        st.download_button(
+            "🖼️ Download Plot", 
+            save_plot(fig), 
+            file_name="plot.png", 
+            mime="image/png"
+        )
 
 else:
     st.info("""
