@@ -1,8 +1,9 @@
 [theme]
-primaryColor = "#4CAF50"
-backgroundColor = "#FFFFFF"
-secondaryBackgroundColor = "#F0F2F6"
-textColor = "#262730"
+base = "dark"
+primaryColor = "#4CAF50"  # Vibrant green for highlights
+backgroundColor = "#1E1E1E"  # Dark gray for main background
+secondaryBackgroundColor = "#2C2C2C"  # Slightly lighter for cards/containers
+textColor = "#E0E0E0"  # Light gray for readability
 font = "sans serif"
 
 [server]
