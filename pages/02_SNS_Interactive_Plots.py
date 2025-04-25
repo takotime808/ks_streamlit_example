@@ -44,7 +44,10 @@ if uploaded_file:
             display_plot("🎯 Scatterplot with Continuous Hues and Sizes", lambda: sns.relplot(data=df[selected_cols], x=df[selected_cols].columns[0], y=df[selected_cols].columns[1], hue=df[selected_cols].columns[0], size=df[selected_cols].columns[1]).figure)
 
             # 3. Small multiple time series
-            display_plot("⏱️ Small Multiple Time Series", lambda: sns.relplot(data=df[selected_cols], x=df[selected_cols].columns[0], y=df[selected_cols].columns[1], col="day", hue="timepoint", kind="line").figure)
+            try:
+                display_plot("⏱️ Small Multiple Time Series", lambda: sns.relplot(data=df[selected_cols], x=df[selected_cols].columns[0], y=df[selected_cols].columns[1], col="day", hue="timepoint", kind="line").figure)
+            except Exception as err:
+                st.markdown(f"Oopsie: {err}")
 
             # 4. Horizontal boxplot with observations
             def horizontal_boxplot():
