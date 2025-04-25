@@ -51,6 +51,38 @@ scipy==1.11.0
 matplotlib==3.7.1
 ```
 
+----
+## Metrics Checklist
+
+- [ ] Validation Metrics:
+    - [ ] Deterministic Validation Metric:
+        - [ ] Root Mean Square Error
+        - [ ] Minkowski Distance ($l_{p}$ Distance)
+    - [ ] Probability-Based Validation Metrics
+        - [ ] Normalized Euclidean Metrid
+        - [ ] Mahalanobis Distance
+        - [ ] Kullback-Leibler Divergence
+        - [ ] Symmetrized Divergence
+        - [ ] Jensen-Shannon Divergence
+        - [ ] Hellinger Metric
+        - [ ] Kolmogorov-Smirnov Test
+        - [ ] Total Variation Distance
+    - [ ] Signal Processing Validation Metrics
+        - [ ] Simple Cross Correlation
+        - [ ] Normalized Cross Correlationl
+        - [ ] Normalized Zero-Mean Sum of Squared Distances
+        - [ ] Moravec Correlationl
+        - [ ] Index of Agreement
+        - [ ] Sprague-Geers Metric
+
+All of the metrics above come from the Sandia Report titled "Validation Metrics for Deterministic and Probabilistic Data". The full report is:
+
+SANDIA REPORT
+SAND2016-1421
+Unlimited Release
+Printed January 2017
+Validation Metrics for Deterministic and Probabilistic Data
+Kathryn A. Maupin and Laura P. Swiler
 
 ----
 ----
