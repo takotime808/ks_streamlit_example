@@ -216,4 +216,4 @@ if uploaded_file1 and uploaded_file2:
         """)
 
 else:
-    st.info("📂 Please upload both CSV files to begin.")
+    st.info("📂 Please upload both CSV files to begin.\nIf you do not have any, navigator to the 'Generate Distribution' page in the left side bar and make some csv files to upload here.")
