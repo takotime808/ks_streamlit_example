@@ -2,7 +2,7 @@
 
 App deployed with Python 3.10.17 at:
 
-[https://ks-example.streamlit.app/](https://ks-example.streamlit.app/)
+[https://distributions-and-metrics.streamlit.app/](https://distributions-and-metrics.streamlit.app/)
 
 This Streamlit app compares two uploaded samples using statistical tests like **Kolmogorov-Smirnov** and **Anderson-Darling**. It includes:
 - Histogram and ECDF visualizations
