@@ -38,31 +38,37 @@ if uploaded_file:
 
             # --- Plots --- #
             # 1. Timeseries plot with error bands
-            display_plot("📈 Timeseries with Error Bands", lambda: sns.lineplot(data=df[selected_cols], x=df[selected_cols].columns[0], y=df[selected_cols].columns[1]).figure)
-
-            # 2. Scatterplot with continuous hues and sizes
-            display_plot("🎯 Scatterplot with Continuous Hues and Sizes", lambda: sns.relplot(data=df[selected_cols], x=df[selected_cols].columns[0], y=df[selected_cols].columns[1], hue=df[selected_cols].columns[0], size=df[selected_cols].columns[1]).figure)
-
-            # 3. Small multiple time series
             try:
-                display_plot("⏱️ Small Multiple Time Series", lambda: sns.relplot(data=df[selected_cols], x=df[selected_cols].columns[0], y=df[selected_cols].columns[1], col="day", hue="timepoint", kind="line").figure)
+                display_plot("📈 Timeseries with Error Bands", lambda: sns.lineplot(data=df[selected_cols], x=df[selected_cols].columns[0], y=df[selected_cols].columns[1]).figure)
             except Exception as err:
                 st.markdown(f"Oopsie: {err}")
 
-            # 4. Horizontal boxplot with observations
-            def horizontal_boxplot():
-                fig, ax = plt.subplots()
-                sns.boxplot(x=df[selected_cols].iloc[:, 0], y=df[selected_cols].iloc[:, 1], data=df, ax=ax)
-                sns.stripplot(x=df[selected_cols].iloc[:, 0], y=df[selected_cols].iloc[:, 1], data=df, color=".3", size=3, jitter=True, ax=ax)
-                sns.despine()
-                return fig
-            display_plot("📦 Horizontal Boxplot with Observations", horizontal_boxplot)
+            # 2. Scatterplot with continuous hues and sizes
+            try:
+                display_plot("🎯 Scatterplot with Continuous Hues and Sizes", lambda: sns.relplot(data=df[selected_cols], x=df[selected_cols].columns[0], y=df[selected_cols].columns[1], hue=df[selected_cols].columns[0], size=df[selected_cols].columns[1]).figure)
+            except Exception as err:
+                st.markdown(f"Oopsie: {err}")
+
+            # 3. Conditional KDE
+            try:
+                display_plot("🌊 Conditional KDE", lambda: sns.displot(data=df, x=df[selected_cols].columns[0], col="time", kind="kde").figure)
+            except Exception as err:
+                st.markdown(f"Oopsie: {err}")
+
+            # 4. ...
+            # ...
 
             # 5. Linear regression with marginal distributions
-            display_plot("📐 Linear Regression with Marginals", lambda: sns.jointplot(data=df[selected_cols], x=df[selected_cols].columns[0], y=df[selected_cols].columns[1], kind="reg").figure)
+            try:
+                display_plot("📐 Linear Regression with Marginals", lambda: sns.jointplot(data=df[selected_cols], x=df[selected_cols].columns[0], y=df[selected_cols].columns[1], kind="reg").figure)
+            except Exception as err:
+                st.markdown(f"Oopsie: {err}")
 
             # 6. Scatterplot with varying point sizes and hues
-            display_plot("🟡 Scatterplot with Varying Size/Hue", lambda: sns.relplot(data=df[selected_cols], x=df[selected_cols].columns[0], y=df[selected_cols].columns[1], hue=df[selected_cols].columns[0], size=df[selected_cols].columns[1]).figure)
+            try:
+                display_plot("🟡 Scatterplot with Varying Size/Hue", lambda: sns.relplot(data=df[selected_cols], x=df[selected_cols].columns[0], y=df[selected_cols].columns[1], hue=df[selected_cols].columns[0], size=df[selected_cols].columns[1]).figure)
+            except Exception as err:
+                st.markdown(f"Oopsie: {err}")
 
             # 7. Violinplots with observations
             def violinplot_with_points():
@@ -70,7 +76,10 @@ if uploaded_file:
                 sns.violinplot(x=df[selected_cols].iloc[:, 0], y=df[selected_cols].iloc[:, 1], data=df, ax=ax, inner=None)
                 sns.stripplot(x=df[selected_cols].iloc[:, 0], y=df[selected_cols].iloc[:, 1], data=df, ax=ax, color="white", size=2, jitter=True)
                 return fig
-            display_plot("🎻 Violinplot with Observations", violinplot_with_points)
+            try:
+                display_plot("🎻 Violinplot with Observations", violinplot_with_points)
+            except Exception as err:
+                st.markdown(f"Oopsie: {err}")
 
             # 8. Smooth kernel density with marginal histograms
             def kde_with_marginals():
@@ -78,13 +87,22 @@ if uploaded_file:
                 g.plot(sns.scatterplot, sns.histplot)
                 g.plot_marginals(sns.kdeplot, fill=True)
                 return g.figure
-            display_plot("🔍 KDE with Marginal Histograms", kde_with_marginals)
+            try:
+                display_plot("🔍 KDE with Marginal Histograms", kde_with_marginals)
+            except Exception as err:
+                st.markdown(f"Oopsie: {err}")
 
             # 9. Annotated heatmap
-            display_plot("🔥 Annotated Heatmap", lambda: sns.heatmap(df.corr(), annot=True, fmt="d").figure)
+            try:
+                display_plot("🔥 Annotated Heatmap", lambda: sns.heatmap(df.corr(), annot=True, fmt="d").figure)
+            except Exception as err:
+                st.markdown(f"Oopsie: {err}")
 
             # 10. Boxenplot for large distributions
-            display_plot("📦 Plotting Large Distributions (Boxenplot)", lambda: sns.boxenplot(x=df[selected_cols].iloc[:, 0], y=df[selected_cols].iloc[:, 1], data=df).figure)
+            try:
+                display_plot("📦 Plotting Large Distributions (Boxenplot)", lambda: sns.boxenplot(x=df[selected_cols].iloc[:, 0], y=df[selected_cols].iloc[:, 1], data=df).figure)
+            except Exception as err:
+                st.markdown(f"Oopsie: {err}")
 
             # 11. Stacked histogram on log scale
             def stacked_hist_log():
@@ -92,7 +110,10 @@ if uploaded_file:
                 sns.histplot(data=df, x=df[selected_cols].iloc[:, 0], hue="cut", multiple="stack", log_scale=True, ax=ax)
                 sns.despine()
                 return fig
-            display_plot("📊 Stacked Histogram (Log Scale)", stacked_hist_log)
+            try:
+                display_plot("📊 Stacked Histogram (Log Scale)", stacked_hist_log)
+            except Exception as err:
+                st.markdown(f"Oopsie: {err}")
 
             # 12. Paired categorical plots (PairGrid)
             def paired_categorical():
@@ -100,10 +121,16 @@ if uploaded_file:
                 g.map(sns.barplot)
                 sns.despine()
                 return g.figure
-            display_plot("🧩 Paired Categorical Plots", paired_categorical)
+            try:
+                display_plot("🧩 Paired Categorical Plots", paired_categorical)
+            except Exception as err:
+                st.markdown(f"Oopsie: {err}")
 
             # 13. Plotting on many facets
-            display_plot("📁 Plotting Many Facets", lambda: sns.FacetGrid(df, col="method", col_wrap=4, height=2).map_dataframe(sns.histplot, x="distance").figure)
+            try:
+                display_plot("📁 Plotting Many Facets", lambda: sns.FacetGrid(df, col="method", col_wrap=4, height=2).map_dataframe(sns.histplot, x="distance").figure)
+            except Exception as err:
+                st.markdown(f"Oopsie: {err}")
 
             # 14. Violinplot from wide-form dataset
             def wide_violinplot():
@@ -111,7 +138,10 @@ if uploaded_file:
                 sns.violinplot(data=df.iloc[:, :-1], ax=ax)
                 sns.despine()
                 return fig
-            display_plot("🎻 Violinplot from Wide-form", wide_violinplot)
+            try:
+                display_plot("🎻 Violinplot from Wide-form", wide_violinplot)
+            except Exception as err:
+                st.markdown(f"Oopsie: {err}")
 
             # 15. Bivariate plot with multiple elements
             def bivariate_elements():
@@ -119,10 +149,28 @@ if uploaded_file:
                 sns.scatterplot(data=df, x=df[selected_cols].columns[0], y=df[selected_cols].columns[1], ax=ax)
                 sns.kdeplot(data=df, x=df[selected_cols].columns[0], y=df[selected_cols].columns[1], ax=ax, levels=5, color="r")
                 return fig
-            display_plot("🧮 Bivariate with Multiple Elements", bivariate_elements)
+            try:
+                display_plot("🧮 Bivariate with Multiple Elements", bivariate_elements)
+            except Exception as err:
+                st.markdown(f"Oopsie: {err}")
 
-            # 16. Conditional KDE
-            display_plot("🌊 Conditional KDE", lambda: sns.displot(data=df, x=df[selected_cols].columns[0], col="time", kind="kde").figure)
+            # 16. Small multiple time series
+            try:
+                display_plot("⏱️ Small Multiple Time Series", lambda: sns.relplot(data=df[selected_cols], x=df[selected_cols].columns[0], y=df[selected_cols].columns[1], col="day", hue="timepoint", kind="line").figure)
+            except Exception as err:
+                st.markdown(f"Oopsie: {err}")
+
+            # 16. Horizontal boxplot with observations
+            def horizontal_boxplot():
+                fig, ax = plt.subplots()
+                sns.boxplot(x=df[selected_cols].iloc[:, 0], y=df[selected_cols].iloc[:, 1], data=df, ax=ax)
+                sns.stripplot(x=df[selected_cols].iloc[:, 0], y=df[selected_cols].iloc[:, 1], data=df, color=".3", size=3, jitter=True, ax=ax)
+                sns.despine()
+                return fig
+            try:
+                display_plot("📦 Horizontal Boxplot with Observations", horizontal_boxplot)
+            except Exception as err:
+                st.markdown(f"Oopsie: {err}")
 
 else:
     st.info("👈 Upload a CSV file with numeric columns to get started.")
