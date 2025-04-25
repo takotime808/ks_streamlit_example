@@ -7,3 +7,9 @@ matplotlib==3.6.3
 altair==4.2.0  # specify Altair version 4.x for compatibility
 scikit-learn==1.0.2  # compatible with Python 3.10.17
 seaborn==0.11.2
+plotly==5.13.1
+
+# # interactive plots
+# streamlit>=1.32.0
+# plotly>=5.18.0
+# pandas>=1.5.0
