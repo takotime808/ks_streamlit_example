@@ -70,16 +70,8 @@ if uploaded_file:
             except Exception as err:
                 st.markdown(f"Oopsie: {err}")
 
-            # 7. Violinplots with observations
-            def violinplot_with_points():
-                fig, ax = plt.subplots()
-                sns.violinplot(x=df[selected_cols].iloc[:, 0], y=df[selected_cols].iloc[:, 1], data=df, ax=ax, inner=None)
-                sns.stripplot(x=df[selected_cols].iloc[:, 0], y=df[selected_cols].iloc[:, 1], data=df, ax=ax, color="white", size=2, jitter=True)
-                return fig
-            try:
-                display_plot("🎻 Violinplot with Observations", violinplot_with_points)
-            except Exception as err:
-                st.markdown(f"Oopsie: {err}")
+            # 7. ...
+            # ...
 
             # 8. Smooth kernel density with marginal histograms
             def kde_with_marginals():
@@ -154,13 +146,24 @@ if uploaded_file:
             except Exception as err:
                 st.markdown(f"Oopsie: {err}")
 
-            # 16. Small multiple time series
+            # -3. Violinplots with observations
+            def violinplot_with_points():
+                fig, ax = plt.subplots()
+                sns.violinplot(x=df[selected_cols].iloc[:, 0], y=df[selected_cols].iloc[:, 1], data=df, ax=ax, inner=None)
+                sns.stripplot(x=df[selected_cols].iloc[:, 0], y=df[selected_cols].iloc[:, 1], data=df, ax=ax, color="white", size=2, jitter=True)
+                return fig
+            try:
+                display_plot("🎻 Violinplot with Observations", violinplot_with_points)
+            except Exception as err:
+                st.markdown(f"Oopsie: {err}")
+
+            # -2. Small multiple time series
             try:
                 display_plot("⏱️ Small Multiple Time Series", lambda: sns.relplot(data=df[selected_cols], x=df[selected_cols].columns[0], y=df[selected_cols].columns[1], col="day", hue="timepoint", kind="line").figure)
             except Exception as err:
                 st.markdown(f"Oopsie: {err}")
 
-            # 16. Horizontal boxplot with observations
+            # -1. Horizontal boxplot with observations
             def horizontal_boxplot():
                 fig, ax = plt.subplots()
                 sns.boxplot(x=df[selected_cols].iloc[:, 0], y=df[selected_cols].iloc[:, 1], data=df, ax=ax)
