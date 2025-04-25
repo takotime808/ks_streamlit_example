@@ -1,7 +1,9 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-from scipy.stats import ks_2samp, anderson_ksamp, zscore
+from scipy.stats import ks_2samp, anderson_ksamp, zscore, entropy
+from scipy.spatial.distance import euclidean, minkowski, mahalanobis
+from scipy.linalg import inv
 import matplotlib.pyplot as plt
 from io import StringIO, BytesIO
 
@@ -66,45 +68,102 @@ if uploaded_file1 and uploaded_file2:
     data1 = preprocess(data1, "Sample 1")
     data2 = preprocess(data2, "Sample 2")
 
-    # === Statistical Test ===
-    st.sidebar.header("Step 4: Testing")
-    test_type = st.sidebar.selectbox("Test Type", ["Kolmogorov-Smirnov", "Anderson-Darling"])
-    alpha = st.sidebar.slider("Significance Level (α)", 0.01, 0.10, 0.05, step=0.01)
+    # === Metric Selection ===
+    st.sidebar.header("Step 4: Select Metrics")
+    with st.sidebar.expander("Validation Metrics"):
+        det_metrics = st.multiselect("Deterministic Validation Metrics", [
+            "Root Mean Square Error",
+            "Minkowski Distance"
+        ])
+        prob_metrics = st.multiselect("Probability-Based Validation Metrics", [
+            "Normalized Euclidean Metric",
+            "Mahalanobis Distance",
+            "Kullback-Leibler Divergence",
+            "Symmetrized Divergence",
+            "Jensen-Shannon Divergence",
+            "Hellinger Metric",
+            "Kolmogorov-Smirnov Test",
+            "Total Variation Distance"
+        ])
+        sig_metrics = st.multiselect("Signal Processing Validation Metrics", [
+            "Simple Cross Correlation",
+            "Normalized Cross Correlation",
+            "Normalized Zero-Mean Sum of Squared Distances",
+            "Moravec Correlation",
+            "Index of Agreement",
+            "Sprague-Geers Metric"
+        ])
 
-    st.header("📈 Test Results")
-    if test_type == "Kolmogorov-Smirnov":
-        stat, p_value = ks_2samp(data1, data2)
-        test_name = "Kolmogorov-Smirnov"
-    else:
-        result = anderson_ksamp([data1, data2])
-        stat = result.statistic
-        p_value = result.significance_level / 100  # percent to decimal
-        test_name = "Anderson-Darling"
+    all_metrics = det_metrics + prob_metrics + sig_metrics
+    show_results = st.sidebar.button("Run Metrics")
 
-    conclusion = (
-        "❌ Reject H₀: Distributions are different"
-        if p_value < alpha
-        else "✅ Fail to reject H₀: Distributions are similar"
-    )
+    if show_results:
+        st.header("📈 Selected Validation Metrics")
+        results = {}
 
-    st.markdown(f"**Test:** {test_name}")
-    st.markdown(f"**Statistic:** `{stat:.4f}`")
-    st.markdown(f"**P-value:** `{p_value:.4f}`")
-    st.markdown(f"**Conclusion (α = {alpha:.2f}):** {conclusion}")
+        if "Root Mean Square Error" in det_metrics:
+            results["Root Mean Square Error"] = np.sqrt(np.mean((data1 - data2) ** 2))
 
-    # === Download Results ===
-    result_df = pd.DataFrame({
-        "Test": [test_name],
-        "Statistic": [stat],
-        "P-value": [p_value],
-        "Alpha": [alpha],
-        "Conclusion": [conclusion]
-    })
-    csv_buf = StringIO()
-    result_df.to_csv(csv_buf, index=False)
-    st.download_button("📥 Download Results CSV", csv_buf.getvalue(), file_name="test_results.csv", mime="text/csv")
+        if "Minkowski Distance" in det_metrics:
+            results["Minkowski Distance (p=3)"] = minkowski(data1, data2, 3)
 
-    # === Plotting Functions ===
+        if "Normalized Euclidean Metric" in prob_metrics:
+            results["Normalized Euclidean Metric"] = np.linalg.norm(data1 - data2) / len(data1)
+
+        if "Mahalanobis Distance" in prob_metrics:
+            cov = np.cov(np.stack([data1, data2]), rowvar=False)
+            VI = inv(cov)
+            diff = np.mean(data1) - np.mean(data2)
+            results["Mahalanobis Distance"] = np.sqrt(diff ** 2 * VI[0, 0])
+
+        if "Kullback-Leibler Divergence" in prob_metrics:
+            p = np.histogram(data1, bins=30, density=True)[0] + 1e-10
+            q = np.histogram(data2, bins=30, density=True)[0] + 1e-10
+            results["Kullback-Leibler Divergence"] = entropy(p, q)
+
+        if "Symmetrized Divergence" in prob_metrics:
+            results["Symmetrized Divergence"] = entropy(p, q) + entropy(q, p)
+
+        if "Jensen-Shannon Divergence" in prob_metrics:
+            m = 0.5 * (p + q)
+            results["Jensen-Shannon Divergence"] = 0.5 * entropy(p, m) + 0.5 * entropy(q, m)
+
+        if "Hellinger Metric" in prob_metrics:
+            results["Hellinger Metric"] = np.sqrt(0.5 * np.sum((np.sqrt(p) - np.sqrt(q)) ** 2))
+
+        if "Kolmogorov-Smirnov Test" in prob_metrics:
+            stat, _ = ks_2samp(data1, data2)
+            results["Kolmogorov-Smirnov Test"] = stat
+
+        if "Total Variation Distance" in prob_metrics:
+            results["Total Variation Distance"] = 0.5 * np.sum(np.abs(p - q))
+
+        if "Simple Cross Correlation" in sig_metrics:
+            results["Simple Cross Correlation"] = np.corrcoef(data1, data2)[0, 1]
+
+        if "Normalized Cross Correlation" in sig_metrics:
+            results["Normalized Cross Correlation"] = np.sum((data1 - np.mean(data1)) * (data2 - np.mean(data2))) / (len(data1) * np.std(data1) * np.std(data2))
+
+        if "Normalized Zero-Mean Sum of Squared Distances" in sig_metrics:
+            results["Normalized Zero-Mean Sum of Squared Distances"] = np.sum((data1 - np.mean(data1) - (data2 - np.mean(data2)))**2)
+
+        if "Moravec Correlation" in sig_metrics:
+            results["Moravec Correlation"] = np.sum(np.abs(np.roll(data1, 1) - data2))
+
+        if "Index of Agreement" in sig_metrics:
+            numerator = np.sum((data1 - data2) ** 2)
+            denom = np.sum((np.abs(data1 - np.mean(data2)) + np.abs(data2 - np.mean(data2))) ** 2)
+            results["Index of Agreement"] = 1 - numerator / denom
+
+        if "Sprague-Geers Metric" in sig_metrics:
+            A = np.sum(((data1 - data2) / data1) ** 2)
+            B = np.sum(((data2 - data1) / data2) ** 2)
+            results["Sprague-Geers Metric"] = 100 * np.sqrt((A + B) / (2 * len(data1)))
+
+        for key, value in results.items():
+            st.markdown(f"**{key}:** `{value:.4f}`")
+
+    # === Plotting ===
     def ecdf(data):
         x = np.sort(data)
         y = np.arange(1, len(data) + 1) / len(data)
@@ -115,7 +174,6 @@ if uploaded_file1 and uploaded_file2:
         fig.savefig(buf, format="png")
         return buf.getvalue()
 
-    # === Histogram ===
     st.subheader("📊 Histogram")
     fig1, ax1 = plt.subplots()
     ax1.hist(data1, bins=30, alpha=0.6, label="Sample 1", color="skyblue")
@@ -125,7 +183,6 @@ if uploaded_file1 and uploaded_file2:
     st.pyplot(fig1)
     st.download_button("🖼️ Download Histogram", save_plot(fig1), file_name="histogram.png", mime="image/png")
 
-    # === ECDF ===
     st.subheader("📈 ECDF")
     x1, y1 = ecdf(data1)
     x2, y2 = ecdf(data2)
@@ -136,6 +193,27 @@ if uploaded_file1 and uploaded_file2:
     ax2.legend()
     st.pyplot(fig2)
     st.download_button("🖼️ Download ECDF", save_plot(fig2), file_name="ecdf.png", mime="image/png")
+
+    # === Summary Section ===
+    with st.expander("ℹ️ Metric Descriptions"):
+        st.markdown("""
+        - **Root Mean Square Error (RMSE)**: Measures the average magnitude of the error.
+        - **Minkowski Distance**: A general distance metric (p=3 used).
+        - **Normalized Euclidean Metric**: Euclidean distance normalized by number of elements.
+        - **Mahalanobis Distance**: Accounts for variance in each dimension.
+        - **Kullback-Leibler Divergence**: Measures information loss when one distribution is used to approximate another.
+        - **Symmetrized Divergence**: Sum of KL divergences in both directions.
+        - **Jensen-Shannon Divergence**: Symmetric version of KL divergence.
+        - **Hellinger Metric**: Measures similarity between two probability distributions.
+        - **Kolmogorov-Smirnov Test**: Measures the maximum distance between ECDFs.
+        - **Total Variation Distance**: Half of the L1 distance between two distributions.
+        - **Simple Cross Correlation**: Measures linear correlation.
+        - **Normalized Cross Correlation**: Cross correlation normalized by variance.
+        - **Normalized Zero-Mean SSD**: Sum of squared differences after zero-meaning.
+        - **Moravec Correlation**: Window-based correlation sensitive to texture.
+        - **Index of Agreement**: Degree of model prediction accuracy.
+        - **Sprague-Geers Metric**: Compares measured and predicted data magnitudes.
+        """)
 
 else:
     st.info("📂 Please upload both CSV files to begin.")
