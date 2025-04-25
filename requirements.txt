@@ -6,3 +6,4 @@ matplotlib==3.6.3
 # altair<5
 altair==4.2.0  # specify Altair version 4.x for compatibility
 scikit-learn==1.0.2  # compatible with Python 3.10.17
+seaborn==0.11.2
