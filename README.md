@@ -25,6 +25,16 @@ This Streamlit app compares two uploaded samples using statistical tests like **
    streamlit run Compare_Distributions.py
    ```
 
+
+### Sampling Audit Page
+
+To compare your data against Latin hypercube, grid, and random sampling strategies, run:
+
+```sh
+streamlit run pages/11_Sampling_Audit.py
+```
+
+Within the app you can upload a CSV and YAML configuration or click **Run Example** to use the files in `examples/`.
 ----
 ## Requirements
 

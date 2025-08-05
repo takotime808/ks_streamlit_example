@@ -1,0 +1,5 @@
+dependent_variables: [x, y]
+distributions: [uniform, normal]
+stat1: [0, 0]
+stat2: [1, 1]
+stat3: [null, null]
